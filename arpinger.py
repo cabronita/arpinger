@@ -27,7 +27,7 @@ col = client['arping']['states']
 
 
 def get_interface_dev():
-    get_route = f"/usr/sbin/ip -oneline route get {ip}"
+    get_route = f"ip -oneline route get {ip}"
     return run(get_route.split(), capture_output=True, text=True).stdout.split()[2]
 
 
