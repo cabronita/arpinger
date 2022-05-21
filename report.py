@@ -32,23 +32,19 @@ def main():
     if not online_times_list:
         print('No data')
         exit()
-    day_ago = datetime.now().replace(second=0, microsecond=0) - timedelta(days=1)
-    if day_ago < online_times_list[0]:
-        time = day_ago
-    else:
-        time = online_times_list[0]
+    dt_time = datetime.now().replace(second=0, microsecond=0) - timedelta(days=6)
     previous_state = False
     while True:
-        was_online = time in online_times_list
+        was_online = dt_time in online_times_list
         if was_online == previous_state:
             if was_online:
-                print(f"{time} UP")
+                print(f"{dt_time.strftime('%a %H:%M')} UP")
             else:
-                print(f"{time} DOWN")
-        if time == online_times_list[-1]:
+                print(f"{dt_time.strftime('%a %H:%M')} DOWN")
+        if dt_time == online_times_list[-1]:
             break
         else:
-            time = time + timedelta(minutes=1)
+            dt_time = dt_time + timedelta(minutes=1)
             previous_state = not was_online
 
 
