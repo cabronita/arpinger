@@ -41,7 +41,7 @@ def main():
                 print(f"{dt_time.strftime('%a %H:%M')} UP")
             else:
                 print(f"{dt_time.strftime('%a %H:%M')} DOWN")
-        if dt_time == online_times_list[-1]:
+        if dt_time == datetime.now().replace(second=0, microsecond=0):
             break
         else:
             dt_time = dt_time + timedelta(minutes=1)
