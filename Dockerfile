@@ -1,16 +1,11 @@
-FROM centos:7
+FROM centos/python-38-centos7
 
-RUN yum install -y \
-    iproute \
-    python3 \
-    && yum clean all
+ENV TZ='Europe/London'
 
-WORKDIR /app
-
-COPY requirements.txt ./
-RUN python3 -m pip install --no-cache-dir -r requirements.txt
-
+COPY requirements.txt .
 COPY arping.py .
 
-ENTRYPOINT [ "python3", "./arping.py"]
+RUN python -m pip install --no-cache-dir -r requirements.txt
+
+ENTRYPOINT [ "python", "./arping.py"]
 CMD [ "--help" ]
