@@ -29,7 +29,11 @@ def main():
     online_times_list = []
     for i in records:
         online_times_list.append(datetime.strptime(i['_id'], '%Y-%m-%d %H:%M'))
-    time = online_times_list[0]
+    week_ago = datetime.now().replace(second=0, microsecond=0) - timedelta(days=7)
+    if week_ago < online_times_list[0]:
+        time = week_ago
+    else:
+        time = online_times_list[0]
     alternate_state = False
     while True:
         was_online = time in online_times_list
