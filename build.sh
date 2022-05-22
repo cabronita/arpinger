@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
 
-docker build -t cabronita/arping:$(git rev-parse --short HEAD) .
-docker push cabronita/arping:$(git rev-parse --short HEAD)
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+
+docker build -t cabronita/arping:${TIMESTAMP} .
+
+docker push cabronita/arping:${TIMESTAMP}
