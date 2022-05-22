@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from datetime import datetime
+from socket import gethostbyname
 import subprocess
 from time import sleep
 import logging
@@ -14,6 +15,7 @@ parser.add_argument('-v', '--verbosity', action='count', default=0, help='increa
 args = parser.parse_args()
 
 target = args.target
+target_ip = gethostbyname(target)
 interface = args.interface
 verbosity = args.verbosity
 
@@ -29,8 +31,8 @@ cursor = client[database][collection]
 
 
 def arping():
-    logging.debug('Sending arping...')
-    command = f"/usr/sbin/arping -q -f -I {interface} -w 5 {target}"
+    logging.debug(f"Sending arping to {target_ip}")
+    command = f"/usr/sbin/arping -q -f -I {interface} -w 5 {target_ip}"
     return subprocess.run(command.split()).returncode
 
 
