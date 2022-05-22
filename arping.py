@@ -57,7 +57,7 @@ def main():
                 else:
                     logging.info('Down')
             else:
-                logging.debug('Matching record found in database')
+                logging.info('Already up')
                 confirmed_online_time = time
         sleep(1)
 
