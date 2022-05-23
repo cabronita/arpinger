@@ -32,7 +32,7 @@ cursor = client[database][collection]
 
 def arping():
     logging.debug(f"Sending arping to {target_ip}")
-    command = f"/usr/sbin/arping -q -f -I {interface} -w 5 {target_ip}"
+    command = f"/usr/sbin/arping -q -f -I {interface} -w 10 {target_ip}"
     return subprocess.run(command.split()).returncode
 
 
