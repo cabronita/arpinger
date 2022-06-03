@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
 
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-
-docker build -t cabronita/arping:${TIMESTAMP} .
-
-docker push cabronita/arping:${TIMESTAMP}
+docker build -t cabronita/arping:$1 .
+docker push cabronita/arping:$1
