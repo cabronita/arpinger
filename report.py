@@ -35,7 +35,7 @@ def get_recent_online_times(cursor, earliest_timestamp):
 def get_status_change_times(target):
     cursor = client[database][target]
     now = datetime.now().replace(second=0, microsecond=0)
-    earliest_timestamp = now - timedelta(days=6)
+    earliest_timestamp = now - timedelta(days=2)
     online_times_list = get_recent_online_times(cursor, earliest_timestamp)
     if not online_times_list:
         return
