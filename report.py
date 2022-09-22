@@ -62,7 +62,7 @@ def main():
         print(target)
         states = get_status_change_times(target)
         if states:
-            for item in states:
+            for item in states[1:]:
                 state = 'UP' if item['online'] else 'DOWN'
                 print('-', item['ts'].strftime('%a %H:%M'), state)
         else:
