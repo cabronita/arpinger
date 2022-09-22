@@ -7,11 +7,9 @@ import pymongo
 
 parser = ArgumentParser()
 parser.add_argument('targets', metavar='TARGET', nargs='+', help='target hostname')
-parser.add_argument('-d', '--days', default=1, metavar='DAYS', type=int, help='days to look back')
 parser.add_argument('-v', '--verbosity', action='count', default=0, help='increase output verbosity (-vv for debug)')
 args = parser.parse_args()
 
-lookback = args.days
 targets = args.targets
 verbosity = args.verbosity
 
@@ -37,7 +35,7 @@ def get_recent_online_times(cursor, earliest_timestamp):
 def get_status_change_times(target):
     cursor = client[database][target]
     now = datetime.now().replace(second=0, microsecond=0)
-    earliest_timestamp = now - timedelta(days=lookback)
+    earliest_timestamp = now - timedelta(days=6)
     online_times_list = get_recent_online_times(cursor, earliest_timestamp)
     if not online_times_list:
         return
@@ -62,7 +60,7 @@ def main():
         print(target)
         states = get_status_change_times(target)
         if states:
-            for item in states[1:]:
+            for item in states:
                 state = 'UP' if item['online'] else 'DOWN'
                 print('-', item['ts'].strftime('%a %H:%M'), state)
         else:
