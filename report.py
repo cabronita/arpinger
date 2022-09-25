@@ -67,13 +67,6 @@ def main():
                 print('-', item['ts'].strftime('%a %H:%M'), state)
         else:
             print('- No records')
-        if not states:
-            color = 'grey'
-            ts = ''
-        else:
-            (ts, current_state) = states[-1].values()
-            color = 'GREEN' if item['online'] else 'grey'
-        logging.info(f"{color} {ts}")
 
 
 if __name__ == "__main__":
