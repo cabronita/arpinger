@@ -57,14 +57,21 @@ def main():
             ts_str = state_changes[-1]['ts'].strftime('%a %H:%M')
             html_body.append(f'<h1 style="background-color:{color};">{ts_str}</h1>')
 
-    html_doc = []
-    html_doc.append('<!DOCTYPE html><html><style>h1 {text-align: center; font-size:1000%;}</style>')
-    html_doc.append('<meta http-equiv="refresh" content="60"><body>')
-    for line in html_body:
-        html_doc.append(line)
-    html_doc.append('</body></html>')
-    with open(output, 'w') as f:
-        f.writelines(html_doc)
+    cursor = client[database]['report']
+    c = cursor.find_one()
+    previous_state = c['html_body'] if c else None
+
+    if previous_state != html_body:
+        logging.info('Updating output file')
+        cursor.update_one({'_id': 'html_body'}, {'$set': {'html_body': html_body}}, upsert=True)
+        html_doc = []
+        html_doc.append('<!DOCTYPE html><html><style>h1 {text-align: center; font-size:1000%;}</style>')
+        html_doc.append('<meta http-equiv="refresh" content="60"><body>')
+        for line in html_body:
+            html_doc.append(line)
+        html_doc.append('</body></html>')
+        with open(output, 'w') as f:
+            f.writelines(html_doc)
 
 
 if __name__ == "__main__":
