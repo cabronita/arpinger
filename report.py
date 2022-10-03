@@ -7,11 +7,11 @@ import pymongo
 
 parser = ArgumentParser()
 parser.add_argument('targets', metavar='TARGET', nargs='+', help='target hostname')
-parser.add_argument('--days', '-d', default=1, metavar='days', type=int, help='days to look back')
+parser.add_argument('--output', '-o', metavar='file', default='index.html', help='html output file')
 parser.add_argument('-v', '--verbosity', action='count', default=0, help='increase output verbosity (-vv for debug)')
 args = parser.parse_args()
 
-lookback = args.days
+output = args.output
 targets = args.targets
 verbosity = args.verbosity
 
@@ -24,49 +24,47 @@ client = pymongo.MongoClient("mongodb://mongo1:27017,mongo2:27017,mongo3:27017/?
 database = 'arping'
 
 
-def get_recent_online_times(cursor, earliest_timestamp):
-    online_times = []
-    records = cursor.find().sort('_id', pymongo.ASCENDING)
-    for record in records:
-        dt_time = datetime.strptime(record['_id'], '%Y-%m-%d %H:%M')
-        if dt_time >= earliest_timestamp:
-            online_times.append(dt_time)
-    return online_times
-
-
-def get_status_change_times(target):
-    cursor = client[database][target]
-    now = datetime.now().replace(second=0, microsecond=0)
-    earliest_timestamp = now - timedelta(days=lookback)
-    online_times_list = get_recent_online_times(cursor, earliest_timestamp)
-    if not online_times_list:
-        return
-
-    state_changes = list()
-    ts = earliest_timestamp
-    previous_online = None
-    while ts < now:
-        if ts in online_times_list:
-            online = True
-        else:
-            online = False
-        if online != previous_online:
-            state_changes.append({'ts': ts, 'online': online})
-        previous_online = online
-        ts += timedelta(minutes=1)
-    return state_changes
-
-
 def main():
+    minute_ago = datetime.now().replace(second=0, microsecond=0) - timedelta(minutes=1)
+    six_days_ago = minute_ago.replace(hour=0, minute=0) - timedelta(days=6)
+    six_days_ago_db_record_format = str(six_days_ago.strftime('%Y-%m-%d %H:%M'))
+    html_body = []
+
     for target in targets:
-        print(target)
-        states = get_status_change_times(target)
-        if states and len(states) > 1:
-            for item in states[1:]:
-                state = 'UP' if item['online'] else 'DOWN'
-                print('-', item['ts'].strftime('%a %H:%M'), state)
+        cursor = client[database][target]
+        records = cursor.find({'_id': {'$gte': six_days_ago_db_record_format}}).sort('_id', pymongo.ASCENDING)
+        online_times = []
+        for record in records:
+            online_times.append(datetime.strptime(record['_id'], '%Y-%m-%d %H:%M'))
+
+        state_changes = []
+        ts = six_days_ago
+        previous_online = True if ts in online_times else False
+        state_changes.append({'ts': ts, 'online': previous_online})
+        while ts < minute_ago:
+            ts += timedelta(minutes=1)
+            online = True if ts in online_times else False
+            if online != previous_online:
+                state_changes.append({'ts': ts, 'online': online})
+                logging.info(f'{target} appending {ts} {online}')
+            previous_online = online
+
+        if len(state_changes) == 1:
+            color = 'lime' if state_changes[0]['online'] else 'lightgrey'
+            html_body.append(f'<h1 style="background-color:{color};">N/A</h1>')
         else:
-            print('- No records')
+            color = 'lime' if state_changes[-1]['online'] else 'lightgrey'
+            ts_str = state_changes[-1]['ts'].strftime('%a %H:%M')
+            html_body.append(f'<h1 style="background-color:{color};">{ts_str}</h1>')
+
+    html_doc = []
+    html_doc.append('<!DOCTYPE html><html><style>h1 {text-align: center; font-size:500%;}</style>')
+    html_doc.append('<meta http-equiv="refresh" content="60"><body>')
+    for line in html_body:
+        html_doc.append(line)
+    html_doc.append('</body></html>')
+    with open(output, 'w') as f:
+        f.writelines(html_doc)
 
 
 if __name__ == "__main__":
