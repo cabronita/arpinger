@@ -35,7 +35,9 @@ def main():
         records = cursor.find({'_id': {'$gte': six_days_ago_db_record_format}}).sort('_id', pymongo.ASCENDING)
         online_times = []
         for record in records:
-            online_times.append(datetime.strptime(record['_id'], '%Y-%m-%d %H:%M'))
+            date = datetime.strptime(record['_id'], '%Y-%m-%d %H:%M')
+            logging.debug(f'Appending {date}')
+            online_times.append(date)
 
         state_changes = []
         ts = six_days_ago
