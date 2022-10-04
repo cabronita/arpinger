@@ -65,8 +65,8 @@ def main():
         logging.info(f'Writing {output}')
         cursor.update_one({'_id': 'html_body'}, {'$set': {'html_body': html_body}}, upsert=True)
         html_doc = [
-            '<!DOCTYPE html><html><meta http-equiv="refresh" content="60"><style>',
-            'h1 {text-align: center; font-size:200px; padding: 20px}',
+            '<!DOCTYPE html><html><meta http-equiv="refresh" content="30"><style>',
+            'h1 {text-align: center; font-size:2}',
             '.lime {background-color: lime;}',
             '.grey {background-color: grey;}',
             '</style><body style="background-color:black;">',
