@@ -50,23 +50,27 @@ def main():
             previous_online = online
 
         if len(state_changes) == 1:
-            color = 'lime' if state_changes[0]['online'] else 'lightgrey'
-            html_body.append(f'<h1 style="background-color:{color};">N/A</h1>')
+            color = 'lime' if state_changes[0]['online'] else 'grey'
+            html_body.append(f'<div class="{color}"><h1>N/A</h1></div>')
         else:
-            color = 'lime' if state_changes[-1]['online'] else 'lightgrey'
+            color = 'lime' if state_changes[-1]['online'] else 'grey'
             ts_str = state_changes[-1]['ts'].strftime('%a %H:%M')
-            html_body.append(f'<h1 style="background-color:{color};">{ts_str}</h1>')
+            html_body.append(f'<div class="{color}"><h1>{ts_str}</h1></div>')
 
     cursor = client[database]['report']
     c = cursor.find_one()
     previous_state = c['html_body'] if c else None
 
     if previous_state != html_body:
-        logging.info('Updating output file')
+        logging.info(f'Writing {output}')
         cursor.update_one({'_id': 'html_body'}, {'$set': {'html_body': html_body}}, upsert=True)
-        html_doc = []
-        html_doc.append('<!DOCTYPE html><html><style>h1 {text-align: center; font-size:1000%;}</style>')
-        html_doc.append('<meta http-equiv="refresh" content="60"><body>')
+        html_doc = [
+            '<!DOCTYPE html><html><meta http-equiv="refresh" content="60"><style>',
+            'h1 {text-align: center; font-size:200px}',
+            '.lime {background-color: lime;}',
+            '.grey {background-color: grey;}',
+            '</style><body style="background-color:black;">',
+        ]
         for line in html_body:
             html_doc.append(line)
         html_doc.append('</body></html>')
