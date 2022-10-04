@@ -66,7 +66,7 @@ def main():
         cursor.update_one({'_id': 'html_body'}, {'$set': {'html_body': html_body}}, upsert=True)
         html_doc = [
             '<!DOCTYPE html><html><meta http-equiv="refresh" content="30"><style>',
-            'h1 {font-size: 200px; padding: 100px; text-align: center}',
+            'h1 {font-size: 150px; padding: 100px; text-align: center}',
             '.lime {background-color: lime;}',
             '.grey {background-color: grey;}',
             '</style><body style="background-color:black;">',
