@@ -69,8 +69,8 @@ def main():
         html_doc = [
             '<!DOCTYPE html><html><meta http-equiv="refresh" content="30"><style>',
             'h1 {font-size: 150px; padding: 100px; text-align: center}',
-            '.lime {background-color: lime;}',
-            '.grey {background-color: grey;}',
+            '.lime {background-color: red;}',
+            '.grey {background-color: green;}',
             '</style><body style="background-color:black;">',
         ]
         for line in html_body:
