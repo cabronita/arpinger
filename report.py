@@ -52,10 +52,10 @@ def main():
             previous_online = online
 
         if len(state_changes) == 1:
-            color = 'lime' if state_changes[0]['online'] else 'grey'
+            color = 'red' if state_changes[0]['online'] else 'green'
             html_body.append(f'<div class="{color}"><h1>N/A</h1></div>')
         else:
-            color = 'lime' if state_changes[-1]['online'] else 'grey'
+            color = 'red' if state_changes[-1]['online'] else 'green'
             ts_str = state_changes[-1]['ts'].strftime('%a %H:%M')
             html_body.append(f'<div class="{color}"><h1>{ts_str}</h1></div>')
 
@@ -68,9 +68,9 @@ def main():
         cursor.update_one({'_id': 'html_body'}, {'$set': {'html_body': html_body}}, upsert=True)
         html_doc = [
             '<!DOCTYPE html><html><meta http-equiv="refresh" content="30"><style>',
-            'h1 {font-size: 150px; padding: 100px; text-align: center}',
-            '.lime {background-color: red;}',
-            '.grey {background-color: green;}',
+            'h1 {color: white; font-size: 150px; padding: 100px; text-align: center}',
+            '.red {background-color: red;}',
+            '.green {background-color: green;}',
             '</style><body style="background-color:black;">',
         ]
         for line in html_body:
