@@ -52,7 +52,7 @@ def main():
             previous_online = online
 
         if len(state_changes) == 1:
-            color = 'offline' if state_changes[0]['online'] else 'online'
+            color = 'online' if state_changes[0]['online'] else 'offline'
             html_body.append(f'<div class="{color}"><h1>N/A</h1></div>')
         else:
             color = 'online' if state_changes[-1]['online'] else 'offline'
